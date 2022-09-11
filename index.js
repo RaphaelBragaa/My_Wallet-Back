@@ -5,12 +5,37 @@ import { MongoClient } from "mongodb";
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import dotenv from "dotenv";
+import dayjs from "dayjs";
 
 const server=express()
 server.use(cors())
 server.use(express.json())
 
+const time=dayjs()
+
 dotenv.config()
+
+const loginSchema=joi.object({
+    email:joi.string().email(),
+    password:joi.string().required()
+})
+
+const cadastroSchema=joi.object({
+    name:joi.string().required(),
+    email:joi.string().email(),
+    password:joi.string().required()
+})
+
+const paySchema=joi.object({
+    value:joi.string().required() ,
+    description:joi.string().required(),
+    isEntry:joi.boolean()
+})
+
+const tokenSchema=joi.object({
+    toke:joi.string().token()
+})
+
 
 const MongoCliente=new MongoClient(process.env.MONGO_URI)
 let db
@@ -21,7 +46,9 @@ MongoCliente.connect().then(()=>{
 
 server.post('/login', async (req,res)=>{
     const {email,password}=req.body
-    console.log(email)
+    const login=req.body
+    const validation=loginSchema.validate(login,{abortEarly:true})
+    if(validation.error) return res.status(422).send(validation.error.details[0].message)
     try{
         const user = await db.collection('users').findOne({email})
         console.log(user)
@@ -47,6 +74,8 @@ server.post('/login', async (req,res)=>{
 
 server.post('/cadastro', async (req,res)=>{
     const cadastro = req.body
+    const validation=cadastroSchema.validate(cadastro,{abortEarly:true})
+    if(validation.error) return res.status(422).send(validation.error.details[0].message)
     const senhaHash= bcrypt.hashSync(cadastro.password,10)
     try{
         await db.collection('users').insertOne({...cadastro,password:senhaHash}) 
@@ -60,11 +89,12 @@ server.post('/cadastro', async (req,res)=>{
 
 server.get('/posts',async(req,res)=>{
     const token=req.headers.authorization?.replace('Bearer ','')
-
+    const validation=tokenSchema.validate(token,{abortEarly:true})
+    if(validation.error) return res.status(422).send(validation.error.details[0].message)
     if(!token) {return res.status(401).send('token não encontrado !')}
   
       const session = await db.collection('sessions').findOne({token:token})
-    console.log(session._userId)
+
     if (!session) { return res.send(401)};
    
     const user=await db.collection('users').findOne({_id:session.userId})
@@ -72,17 +102,45 @@ server.get('/posts',async(req,res)=>{
         delete user.password
         res.send(user)
     }else{
-       return res.sendStatus(403)
+       return res.sendStatus(401)
     }
-    // const session=await db.collection('sessions').findOne({token})
-    // const test = `ObjectId(${session._id})`
-    // console.log(`${test} é test`)
-    // console.log(`${JSON.stringify(session._id)} é session`)
-    // if(!session) return res.status(402).send('sessão não encontrada')
-    // const user= await db.collection('users').findOne({ 
-	// 	user: test})
-    //     console.log(`${user} é user`)
     
+})
+
+server.post('/moneys', async(req,res)=>{
+    const token=req.headers.authorization?.replace('Bearer ','')
+    const validation1=tokenSchema.validate(token,{abortEarly:true})
+    if(validation1.error) return res.status(422).send(validation.error.details[0].message)
+   if (!token){return res.status(401).send('token não encontrado!')}
+    const {description, value, isEntry} = req.body
+    const pay =req.body
+    const validation=paySchema.validate(pay,{abortEarly:true})
+    if(validation.error) return res.status(422).send(validation.error.details[0].message)
+    const session = await db.collection('sessions').findOne({token:token})
+    if (!session) { return res.send(402)};
+    const user=await db.collection('users').findOne({_id:session.userId})
+    if(user){
+         await db.collection('moneys').insertOne({
+        user:session.userId,
+        date:time.format('DD/MM'),
+        description,
+        value,
+        isEntry
+    })
+    return res.sendStatus(201)
+    }else{
+        return res.sendStatus(403)
+    }
+})
+
+server.get('/moneys',async(req,res)=>{
+    const token=req.headers.authorization?.replace('Bearer ','')
+   if (!token){return res.status(401).send('token não encontrado!')}
+    const session = await db.collection('sessions').findOne({token:token})
+    if (!session) { return res.send(401)};
+    const user=await db.collection('moneys').find({user:session.userId}).toArray()
+    if(!user) { return res.send(401)};
+    res.send(user)
 })
 
 server.listen(5000)

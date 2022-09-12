@@ -89,9 +89,7 @@ export async function cadastrarUser(req,res){
 }
 export async function dadosUser(req,res){
 const token=req.headers.authorization?.replace('Bearer ','')
-const token1=req.headers.authorization
-const validation=tokenSchema.validate(token1,{abortEarly:true})
-if(validation.error) return res.status(422).send(validation.error.details[0].message)
+
 if(!token) {return res.status(401).send('token não encontrado !')}
 
   const session = await db.collection('sessions').findOne({token:token})
@@ -109,8 +107,6 @@ if(user){
 
 export async function moneyUser(req,res){
 const token=req.headers.authorization?.replace('Bearer ','')
-const validation1=tokenSchema.validate(token,{abortEarly:true})
-if(validation1.error) return res.status(422).send(validation.error.details[0].message)
 if (!token){return res.status(401).send('token não encontrado!')}
 const {description, value, isEntry} = req.body
 const pay =req.body
@@ -142,3 +138,4 @@ const user=await db.collection('moneys').find({user:session.userId}).toArray()
 if(!user) { return res.send(401)};
 res.send(user)
 }
+

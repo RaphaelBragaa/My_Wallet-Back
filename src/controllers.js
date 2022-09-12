@@ -1,9 +1,7 @@
 
 import joi from 'joi';
-import { MongoClient } from "mongodb";
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
-import dotenv from "dotenv";
 import dayjs from "dayjs";
 import mongo from './database/mongo.js'
 
@@ -35,12 +33,6 @@ const tokenSchema=joi.object({
     toke:joi.string().token()
 })
 
-// const MongoCliente=new MongoClient(process.env.MONGO_URI)
-//  let db
-
-//  MongoCliente.connect(()=>{
-//      db=MongoCliente.db('test')
-//  })
 
 export async function loginUser(req,res){
    

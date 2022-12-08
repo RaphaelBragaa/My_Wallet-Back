@@ -3,11 +3,11 @@ import joi from 'joi';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import dayjs from "dayjs";
-import mongo from './database/mongo.js'
+import mongo from '../database/mongo.js'
 
 
 
-//dotenv.config()
+
 const time=dayjs()
 
 let db = await mongo()
@@ -70,8 +70,12 @@ export async function cadastrarUser(req,res){
     if(validation.error) return res.status(422).send(validation.error.details[0].message)
     const senhaHash= bcrypt.hashSync(cadastro.password,10)
     try{
-        await db.collection('users').insertOne({...cadastro,password:senhaHash}) 
-        res.status(201).send()
+       const insertUser = await db.collection('users').insertOne({...cadastro,password:senhaHash}) 
+       if(!insertUser){
+        return res.status(500).send()
+       }
+       
+       res.status(201).send()
         return
     }catch(error){
         console.error(error)

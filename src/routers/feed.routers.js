@@ -1,5 +1,5 @@
 import express from 'express'
-import {dadosUser,moneyUser,moneyUserGET} from '../controllers.js'
+import {dadosUser,moneyUser,moneyUserGET} from '../controllers/controllers.js'
 
 const router =express.Router()
 

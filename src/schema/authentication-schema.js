@@ -1,7 +1,7 @@
 import express  from "express";
 import cors from 'cors';
-import userRouter from '../src/routers/user.routers.js'
-import feedRouter from '../src/routers/feed.routers.js'
+import userRouter from '../routers/user.routers.js'
+import feedRouter from '../routers/feed.routers.js'
 
 const server=express()
 server.use(cors())

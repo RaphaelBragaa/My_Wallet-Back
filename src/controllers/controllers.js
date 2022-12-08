@@ -70,7 +70,7 @@ export async function cadastrarUser(req,res){
     if(validation.error) return res.status(422).send(validation.error.details[0].message)
     const senhaHash= bcrypt.hashSync(cadastro.password,10)
     try{
-       const insertUser = await db.collection('users').insertOne({...cadastro,password:senhaHash}) 
+       const insertUser = await db.collection('users').insertOne({...cadastro,password:senhaHash}) //////
        if(!insertUser){
         return res.status(500).send()
        }
@@ -88,11 +88,11 @@ const token=req.headers.authorization?.replace('Bearer ','')
 
 if(!token) {return res.status(401).send('token não encontrado !')}
 
-  const session = await db.collection('sessions').findOne({token:token})
+  const session = await db.collection('sessions').findOne({token:token})//////
 
 if (!session) { return res.send(401)};
 
-const user=await db.collection('users').findOne({_id:session.userId})
+const user=await db.collection('users').findOne({_id:session.userId})/////
 if(user){
     delete user.password
     res.send(user)

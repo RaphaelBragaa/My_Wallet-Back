@@ -1,19 +1,15 @@
-import express  from "express";
-import cors from 'cors';
-import userRouter from '../routers/user.routers.js'
-import feedRouter from '../routers/feed.routers.js'
+import Joi from "joi";
 
-const server=express()
-server.use(cors())
-server.use(express.json())
+export const SigninSchema=Joi.object({
+    email:Joi.string().email(),
+    password:Joi.string().required()
+})
 
-
-server.use(userRouter)
-server.use(feedRouter )
-
-
-
-server.listen(5000)
+export const cadastroSchema=Joi.object({
+    name:Joi.string().required(),
+    email:Joi.string().email(),
+    password:Joi.string().required()
+})
 
 
 

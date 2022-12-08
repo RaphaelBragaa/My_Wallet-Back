@@ -1,9 +1,9 @@
 import { Router }from 'express'
-import { loginUser,cadastrarUser } from '../controllers/controllers.js'
+import { SignUp,Login} from '../controllers/auth-controllers.js'
 
 const UserRouter = Router()
 UserRouter
-          .post('/login', loginUser)
-          .post('/signup', cadastrarUser)
+          .post('/login', Login)
+          .post('/signup', SignUp)
 
 export default UserRouter;

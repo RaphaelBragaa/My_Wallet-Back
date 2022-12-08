@@ -2,8 +2,8 @@ import mongo from "../../database/mongo.js"
 
 let db = await mongo()
 
-async function createUser(signup, hash){
-    return db.collection('users').insertOne({...signup,password:hash}) 
+async function createUser(SignUp, hash){
+    return db.collection('users').insertOne({...SignUp,password:hash}) 
 }
 
 async function findTokenByUser(token){
@@ -19,9 +19,9 @@ async function findUser(email){
 }
 
 
-async function createToken(userId, token){
+async function createToken(user, token){
     return db.collection("sessions").insertOne({
-        userId,
+        userId:user._id,
         token
     })
 }

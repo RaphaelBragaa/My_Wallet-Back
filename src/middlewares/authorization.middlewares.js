@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import AuthenticationRepository from "../repositories/user-repository"
+import AuthenticationRepository from "../repositories/user-repository/index.js"
 
 
 
@@ -15,8 +15,7 @@ export async function validateSessionByToken(req,res,next){
             res.locals.session = session
             next()
         }catch(error){
-            console.log(error)
-            return res.sendStatus(401)
+            return res.send(error).status(401)
         }
      }
     

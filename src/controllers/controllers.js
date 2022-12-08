@@ -46,7 +46,7 @@ export async function loginUser(req,res){
 
         if(user && bcrypt.compareSync(password, user.password)){
             const token= uuid()
-            await db.collection("sessions").insertOne({
+            await db.collection("sessions").insertOne({///////////////
                 userId:user._id,
                 token
             })

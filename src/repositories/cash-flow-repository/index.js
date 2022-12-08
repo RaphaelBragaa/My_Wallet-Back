@@ -1,37 +1,19 @@
+
 import mongo from "../../database/mongo.js"
 
 let db = await mongo()
 
-async function createUser(signup, hash){
-    await db.collection('users').insertOne({...signup,password:hash}) 
+async function registerCash(cash){
+    return db.collection('moneys').insertOne({...cash})
 }
 
-async function findTokenByUser(token){
-    return db.collection('sessions').findOne({token})
+async function findCash(id){
+    return db.collection('moneys').find({user:id}).toArray()
 }
 
-async function signin(_id){
-    return db.collection('users').findOne({_id})
+const ClashFlowRpository = {
+    registerCash,
+    findCash
 }
 
-async function findUser(email){
-    await db.collection('users').findOne({email})
-}
-
-
-async function createToken(userId, token){
-    await db.collection("sessions").insertOne({
-        userId,
-        token
-    })
-}
-
-const AuthenticationRepository ={
-    createUser,
-    findTokenByUser,
-    signin,
-    findUser,
-    createToken
-}
-
-export default AuthenticationRepository
+export default ClashFlowRpository;

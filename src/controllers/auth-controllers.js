@@ -32,7 +32,6 @@ export async function Login(req,res){
 
         if(user && bcrypt.compareSync(login.password, user.password)){
             const token= jwt.sign({ user: user.id }, key);
-            console.log("🚀 ~ file: auth-controllers.js:35 ~ Login ~ token", token)
             await AuthenticationRepository.createToken(user,token)
            res.send(token)
         }else{

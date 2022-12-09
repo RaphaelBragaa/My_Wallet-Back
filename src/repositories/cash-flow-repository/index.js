@@ -11,9 +11,9 @@ async function findCash(id){
     return db.collection('moneys').find({user:id}).toArray()
 }
 
-const ClashFlowRpository = {
+const CashFlowRepository = {
     registerCash,
     findCash
 }
 
-export default ClashFlowRpository;
+export default CashFlowRepository;

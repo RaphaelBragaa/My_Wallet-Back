@@ -11,6 +11,7 @@ export async function SignUp(req,res){
     if(validation.error) return res.status(422).send(validation.error.details[0].message)
     const hash = bcrypt.hashSync(SignUp.password,10)
     try{
+       delete SignUp.confirmPassword
        const insertUser = await AuthenticationRepository.createUser(SignUp,hash)
        if(!insertUser) return res.status(500).send()
        

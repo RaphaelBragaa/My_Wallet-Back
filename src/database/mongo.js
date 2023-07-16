@@ -1,18 +1,17 @@
-import { MongoClient } from "mongodb";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import { MongoClient } from 'mongodb';
 
-dotenv.config()
+dotenv.config();
+let db;
 
-const mongoClient = new MongoClient(process.env.MONGO_URI)
+const mongoClient = new MongoClient(process.env.MONGO_URI);
 
-export default async function mongo () {
-    let conn;
-
-    try {
-        conn = await mongoClient.db('walletDB')
-    return conn;
-    } catch (error) {
-        console.error(error)
-        return error;  }  
-
+try {
+  await mongoClient.connect();
+} catch (error) {
+  console.log(error);
 }
+
+db = mongoClient.db('mywalley');
+
+export default db;
